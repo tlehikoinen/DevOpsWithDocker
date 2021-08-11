@@ -1,0 +1,6 @@
+docker build . -t curler
+docker run -it curler
+
+helsinki.fi
+
+output matched 1.4
