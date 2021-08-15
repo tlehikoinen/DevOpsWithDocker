@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ../../part1/1.14/example-backend
+      dockerfile: Dockerfile
+
+    environment:
+      - REQUEST_ORIGIN=http://localhost
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres1
+
+    ports: 
+      - 8000:8000
+    container_name: backend
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build:
+      context: ../..///part1/1.14/example-frontend
+      dockerfile: Dockerfile
+
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8000
+    ports: 
+      - 5000:5000
+    container_name: frontend
+
+  redis:
+    image: redis
+    container_name: redis
+  
+  db:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    container_name: db_redmine
+    environment:
+      POSTGRES_PASSWORD: postgres1
+    volumes:
+      - .database:/var/lib/postgresql/data
+  
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports: 
+      - 80:80
+

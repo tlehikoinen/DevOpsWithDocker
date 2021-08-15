@@ -6,11 +6,17 @@ services:
     environment:
       - REQUEST_ORIGIN=http://localhost:5000
       - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres1
 
     ports: 
       - 8000:8000
     container_name: backend
     restart: unless-stopped
+    depends_on:
+      - db
+      - redis
 
   frontend:
     image: frontend 
@@ -23,3 +29,15 @@ services:
   redis:
     image: redis
     container_name: redis
+  
+  db:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    container_name: db_redmine
+    environment:
+      POSTGRES_PASSWORD: postgres1
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:
